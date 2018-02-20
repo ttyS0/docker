@@ -2,8 +2,8 @@ FROM alpine:3.7
 # MAINTAINER Jeff Mitchell <jeff@hashicorp.com> (@jefferai)
 MAINTAINER Sean Johnson <sean@ttys0.net) (@ttys0)
 
-# I've shamlesslessly cribbed the Dockerfile from Hashicorp to build an arm64 image.
-# I had to remove the gpg components since the arm64 alpine kept failing on them, and
+# I've shamlesslessly cribbed the Dockerfile from Hashicorp to build an arm image.
+# I had to remove the gpg components since the arm alpine kept failing on them, and
 # will add them back when I've had a chance to puzzle out what the problem is.
 
 # This is the release of Vault to pull in.
@@ -18,8 +18,8 @@ RUN addgroup vault && \
 RUN apk add --no-cache ca-certificates gnupg openssl libcap su-exec dumb-init && \
     mkdir -p /tmp/build && \
     cd /tmp/build && \
-    wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_arm64.zip && \
-    unzip -d /bin vault_${VAULT_VERSION}_linux_arm64.zip && \
+    wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_arm.zip && \
+    unzip -d /bin vault_${VAULT_VERSION}_linux_arm.zip && \
     cd /tmp && \
     rm -rf /tmp/build && \
     apk del gnupg openssl && \
