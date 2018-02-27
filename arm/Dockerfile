@@ -15,15 +15,13 @@ RUN addgroup vault && \
     adduser -S -G vault vault
 
 # Set up certificates, our base tools, and Vault.
-RUN apk add --no-cache ca-certificates gnupg openssl libcap su-exec dumb-init && \
+RUN apk add --no-cache ca-certificates libcap su-exec dumb-init && \
     mkdir -p /tmp/build && \
     cd /tmp/build && \
-    wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_arm.zip && \
-    unzip -d /bin vault_${VAULT_VERSION}_linux_arm.zip && \
+    wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_arm64.zip && \
+    unzip -d /bin vault_${VAULT_VERSION}_linux_arm64.zip && \
     cd /tmp && \
-    rm -rf /tmp/build && \
-    apk del gnupg openssl && \
-    rm -rf /root/.gnupg
+    rm -rf /tmp/build
 
 # /vault/logs is made available to use as a location to store audit logs, if
 # desired; /vault/file is made available to use as a location with the file
