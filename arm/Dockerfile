@@ -7,7 +7,7 @@ MAINTAINER Sean Johnson <sean@ttys0.net) (@ttys0)
 # will add them back when I've had a chance to puzzle out what the problem is.
 
 # This is the release of Vault to pull in.
-ENV VAULT_VERSION=0.9.4
+ENV VAULT_VERSION=0.9.5
 
 # Create a vault user and group first so the IDs get set the same way,
 # even as the rest of this may change over time.
