@@ -1,0 +1,3 @@
+[submodule "hugo"]
+	path = ttys0/hugo-ttys0
+	url = git@github.com:ttyS0/hugo-ttys0.git
