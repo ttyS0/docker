@@ -7,7 +7,7 @@ MAINTAINER Sean Johnson <sean@ttys0.net) (@ttys0)
 # will add them back when I've had a chance to puzzle out what the problem is.
 
 # This is the release of Vault to pull in.
-ENV VAULT_VERSION=0.9.5
+ENV VAULT_VERSION=0.9.6
 
 # Create a vault user and group first so the IDs get set the same way,
 # even as the rest of this may change over time.
@@ -39,7 +39,7 @@ VOLUME /vault/logs
 
 # Expose the file directory as a volume since there's potentially long-running
 # state in there
-VOLUME /vault/file
+# VOLUME /vault/file
 
 # 8200/tcp is the primary interface that applications use to interact with
 # Vault.
