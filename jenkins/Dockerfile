@@ -1,6 +1,6 @@
 FROM jenkins/jenkins:lts
 
-# Current version : 2.89.4
+# Current version : 2.112
 
 # run updates
 USER root
