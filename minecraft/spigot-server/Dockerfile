@@ -1,7 +1,7 @@
-FROM openjdk:alpine
+FROM openjdk:8
 
 ARG MEM="1024M"
-ENV JVM_OPTS="-Xms${MEM} -Xmx${MEM} -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalPacing -XX:+AggressiveOpts"
+ENV JVM_OPTS="-Xms${MEM} -Xmx${MEM}"
 ENV SPIGOT_OPTS="nogui --noconsole"
 
 RUN mkdir -p /minecraft/server
