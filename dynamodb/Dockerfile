@@ -18,7 +18,7 @@ RUN curl -O https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_${D
     tar zxvf dynamodb_local_${DYNAMODB_VERSION}.tar.gz && \
     rm dynamodb_local_${DYNAMODB_VERSION}.tar.gz
 
-COPY ./docker-entrypoint.sh /
+COPY ./entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
 
