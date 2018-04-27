@@ -20,7 +20,7 @@ RUN curl -O https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_${D
 
 COPY ./docker-entrypoint.sh /
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 8000
 
