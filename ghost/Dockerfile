@@ -1,18 +1,13 @@
 # https://docs.ghost.org/supported-node-versions/
 # https://github.com/nodejs/LTS
-FROM node:6-slim
+FROM node:6-alpine
 
-# grab gosu for easy step-down from root
-ENV GOSU_VERSION 1.10
-RUN set -x \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu \
-	&& gosu nobody true
+# grab su-exec for easy step-down from root
+RUN apk add --no-cache 'su-exec>=0.2'
+
+RUN apk add --no-cache \
+# add "bash" for "[["
+		bash
 
 ENV NODE_ENV production
 
@@ -28,15 +23,15 @@ RUN set -ex; \
 	mkdir -p "$GHOST_INSTALL"; \
 	chown node:node "$GHOST_INSTALL"; \
 	\
-	gosu node ghost install "$GHOST_VERSION" --db sqlite3 --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"; \
+	su-exec node ghost install "$GHOST_VERSION" --db sqlite3 --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"; \
 	\
 # Tell Ghost to listen on all ips and not prompt for additional configuration
 	cd "$GHOST_INSTALL"; \
-	gosu node ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
-	gosu node ghost config paths.contentPath "$GHOST_CONTENT"; \
+	su-exec node ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
+	su-exec node ghost config paths.contentPath "$GHOST_CONTENT"; \
 	\
 # make a config.json symlink for NODE_ENV=development (and sanity check that it's correct)
-	gosu node ln -s config.production.json "$GHOST_INSTALL/config.development.json"; \
+	su-exec node ln -s config.production.json "$GHOST_INSTALL/config.development.json"; \
 	readlink -f "$GHOST_INSTALL/config.development.json"; \
 	\
 # need to save initial content for pre-seeding empty volumes
@@ -51,26 +46,7 @@ RUN set -ex; \
 # we want these from the context of Ghost's "node_modules" directory (instead of doing "npm install -g knex-migrator") so they can share the DB driver modules
 ENV PATH $PATH:$GHOST_INSTALL/current/node_modules/knex-migrator/bin
 
-RUN set -eux; \
-# force install "sqlite3" manually since it's an optional dependency of "ghost"
-# (which means that if it fails to install, like on ARM/ppc64le/s390x, the failure will be silently ignored and thus turn into a runtime error instead)
-# see https://github.com/TryGhost/Ghost/pull/7677 for more details
-	cd "$GHOST_INSTALL/current"; \
-# scrape the expected version of sqlite3 directly from Ghost itself
-	sqlite3Version="$(npm view . optionalDependencies.sqlite3)"; \
-	if ! gosu node npm install "sqlite3@$sqlite3Version"; then \
-# must be some non-amd64 architecture pre-built binaries aren't published for, so let's install some build deps and do-it-all-over-again
-		savedAptMark="$(apt-mark showmanual)"; \
-		apt-get update; \
-		apt-get install -y --no-install-recommends python make gcc g++ libc-dev; \
-		rm -rf /var/lib/apt/lists/*; \
-		\
-		gosu node npm install "sqlite3@$sqlite3Version" --build-from-source; \
-		\
-		apt-mark showmanual | xargs apt-mark auto > /dev/null; \
-		[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-		apt-get purge -y --auto-remove; \
-	fi
+# TODO multiarch sqlite3 (once either "node:6-alpine" has multiarch or we switch to a base that does)
 
 WORKDIR $GHOST_INSTALL
 VOLUME $GHOST_CONTENT
