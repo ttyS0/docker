@@ -97,3 +97,4 @@ if [ "$1" = 'vault' ]; then
 fi
 
 exec "$@"
+
