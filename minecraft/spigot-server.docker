@@ -1,11 +1,11 @@
 FROM openjdk:8
 
-ARG MEM="1024M"
+ARG MEM="2g"
 ENV JVM_OPTS="-Xms${MEM} -Xmx${MEM}"
 ENV SPIGOT_OPTS="nogui --noconsole"
 
 RUN mkdir -p /minecraft/server
-ADD eula.txt /minecraft/server/
+CMD echo eula=true > /minecraft/server/eula.txt
 
 # jar files can be obtained via:
 # docker run --rm -v $(pwd):/spigot spigot:latest
