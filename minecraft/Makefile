@@ -13,5 +13,11 @@ endif
 	@echo 'running spigot-build.docker'
 	docker build --build-arg SPIGOT_VERSION=$(SPIGOT_VERSION) --tag spigot-build:$(SPIGOT_VERSION) --file spigot-build.docker .
 	docker run --rm -v $(ROOT_DIR):/spigot spigot-build:$(SPIGOT_VERSION)
-	docker build --tag docker.ttys0.net/spigot-server:$(SPIGOT_VERSION) --file spigot-server.docker .
-	docker push docker.ttys0.net/spigot-server:$(SPIGOT_VERSION)
+	docker build --tag $(DOCKER_REPO)/spigot-server:$(SPIGOT_VERSION) --file spigot-server.docker .
+	docker push $(DOCKER_REPO)/spigot-server:$(SPIGOT_VERSION)
+
+.PHONEY: bungee
+bungee:
+	@echo 'building bungeecord'
+	docker build --tag $(DOCKER_REPO)/bungeecord --file bungeecord.docker .
+	docker push $(DOCKER_REPO)/bungeecord

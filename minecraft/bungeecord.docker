@@ -1,0 +1,19 @@
+FROM openjdk:8-jre
+
+ARG MEM="512m"
+ENV JVM_OPTS="-Xms${MEM} -Xmx${MEM}"
+ENV BUNGEE_OPTS ""
+
+ARG BUNGEE_URL=http://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
+
+RUN mkdir -p /minecraft/server
+ADD "${BUNGEE_URL}" /minecraft/bungeecord.jar
+
+WORKDIR /minecraft/server
+
+EXPOSE 25565
+EXPOSE 25575
+
+CMD ["/bin/sh", "-c", "/usr/bin/java ${JVM_OPTS} -jar /minecraft/bungeecord.jar ${BUNGEE_OPTS}"]
+
+
